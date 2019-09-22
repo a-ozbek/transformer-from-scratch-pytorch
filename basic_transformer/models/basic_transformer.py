@@ -15,6 +15,8 @@ class BasicTransformer:
         self.W_q = torch.rand(dim, dim, requires_grad=True)
         self.W_k = torch.rand(dim, dim, requires_grad=True)
         self.W_v = torch.rand(dim, dim, requires_grad=True)
+        
+        self.linear = nn.Linear(dim, dim)
     
     def forward(self, x):
         """
@@ -42,6 +44,11 @@ class BasicTransformer:
             weights = torch.softmax(weights, dim=1)
             
             y[:, :, i] = torch.sum(weights[:, np.newaxis, :] * v, dim=2)
+            
+        # apply linear layer to each timestep
+        y = y.permute(0, 2, 1) # - permute y to be able to apply it
+        y = self.linear(y)
+        y = y.permute(0, 2, 1) # - permute back
         
         if self.avg_out_seq:
             y = y.mean(dim=2)  # average out the sequence
