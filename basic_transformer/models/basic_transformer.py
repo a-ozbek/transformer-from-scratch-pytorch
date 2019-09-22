@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.functional as F
 
 
-class BasicTransformer:
+class BasicTransformer(nn.Module):
     """
     Basic Transformer
     """
