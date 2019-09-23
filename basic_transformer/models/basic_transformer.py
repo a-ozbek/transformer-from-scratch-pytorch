@@ -8,9 +8,12 @@ class BasicTransformer(nn.Module):
     """
     Basic Transformer
     """
-    def __init__(self, dim, avg_out_seq=True):
+    def __init__(self, dim, num_embeddings, embedding_dim, avg_out_seq=True):
         self.dim = dim
         self.avg_out_seq = avg_out_seq
+        
+        self.embed_layer = nn.Embedding(num_embeddings=num_embeddings, 
+                                        embedding_dim=embedding_dim)
         
         self.W_q = torch.rand(dim, dim, requires_grad=True)
         self.W_k = torch.rand(dim, dim, requires_grad=True)
