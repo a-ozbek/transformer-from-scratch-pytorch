@@ -23,11 +23,13 @@ class BasicTransformer(nn.Module):
     
     def forward(self, x):
         """
-        x: 
+        x: (after embedding)
             dim0: batch dimension
             cols: timesteps (or sequence)
             rows: dimensionality (dim)
         """
+        x = self.embed_layer(x)
+        
         q = torch.matmul(self.W_q, x)
         k = torch.matmul(self.W_k, x)
         v = torch.matmul(self.W_v, x)  # 32 x 8 x 17
