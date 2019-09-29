@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.functional as F
+import torch.nn.functional as F
 
 
 class BasicTransformer(nn.Module):
@@ -9,17 +9,27 @@ class BasicTransformer(nn.Module):
     Basic Transformer
     """
     def __init__(self, dim, num_embeddings, embedding_dim, avg_out_seq=True):
+        super(BasicTransformer, self).__init__()
         self.dim = dim
+        self.num_embeddings = num_embeddings
+        self.embedding_dim = embedding_dim
         self.avg_out_seq = avg_out_seq
         
-        self.embed_layer = nn.Embedding(num_embeddings=num_embeddings, 
-                                        embedding_dim=embedding_dim)
+        self.embed_layer = nn.Embedding(num_embeddings=self.num_embeddings, 
+                                        embedding_dim=self.embedding_dim)
         
         self.W_q = torch.rand(dim, dim, requires_grad=True)
         self.W_k = torch.rand(dim, dim, requires_grad=True)
         self.W_v = torch.rand(dim, dim, requires_grad=True)
         
+        self.W_q = self.W_q.cuda()
+        self.W_k = self.W_k.cuda()
+        self.W_v = self.W_v.cuda()
+        
+        
+        
         self.linear = nn.Linear(dim, dim)
+        self.linear_clf = nn.Linear(dim, 1)
     
     def forward(self, x):
         """
@@ -29,6 +39,7 @@ class BasicTransformer(nn.Module):
             rows: dimensionality (dim)
         """
         x = self.embed_layer(x)
+        x = x.permute(0, 2, 1)
         
         q = torch.matmul(self.W_q, x)
         k = torch.matmul(self.W_k, x)
@@ -38,6 +49,7 @@ class BasicTransformer(nn.Module):
         timesteps = x.shape[2]
         
         y = torch.empty(batch_size, self.dim, timesteps)
+        y = y.cuda()
         
         for i in range(timesteps):
             q_i = q[:, :, i]
@@ -54,9 +66,15 @@ class BasicTransformer(nn.Module):
         y = y.permute(0, 2, 1) # - permute y to be able to apply it
         y = self.linear(y)
         y = y.permute(0, 2, 1) # - permute back
+        y = F.relu(y)
         
         if self.avg_out_seq:
             y = y.mean(dim=2)  # average out the sequence
+        
+        # last clf layer
+        y = self.linear_clf(y)
+        
+        y = F.sigmoid(y)
             
         return y
     
