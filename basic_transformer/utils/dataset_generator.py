@@ -1,5 +1,7 @@
 import numpy as np
 import keras
+from torch.utils.data import Dataset
+from basic_transformer import utils as local_util
 
 
 class TextDataset(Dataset):
