@@ -15,7 +15,7 @@ class BasicTransformer(nn.Module):
         self.embedding_dim = embedding_dim
         self.avg_out_seq = avg_out_seq
         
-        self.embed_layer = nn.Embedding(num_embeddings=self.num_embeddings, 
+        self.embed_layer = nn.Embedding(num_embeddings=self.num_embeddings + 1, 
                                         embedding_dim=self.embedding_dim)
         
         self.W_q = torch.rand(dim, dim, requires_grad=True)
