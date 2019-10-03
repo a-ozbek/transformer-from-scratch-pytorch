@@ -54,7 +54,8 @@ class BasicTransformer(nn.Module):
         for i in range(timesteps):
             q_i = q[:, :, i]
             # get weights
-            weights = torch.matmul(q_i[:, np.newaxis, :], k).squeeze()
+            weights = torch.matmul(q_i[:, np.newaxis, :], k)
+            weights = weights.squeeze(dim=1)
             # scale weights
             weights = weights / np.sqrt(self.dim)
             # softmax weights
