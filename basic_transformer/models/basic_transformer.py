@@ -26,8 +26,6 @@ class BasicTransformer(nn.Module):
         self.W_k = self.W_k.cuda()
         self.W_v = self.W_v.cuda()
         
-        
-        
         self.linear = nn.Linear(dim, dim)
         self.linear_clf = nn.Linear(dim, 1)
     
