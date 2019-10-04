@@ -1,4 +1,4 @@
-
+import numpy as np
 
 
 class AvgContainer:
@@ -26,3 +26,7 @@ class AvgContainer:
         # update
         self.__avg = old_updated_avg + incoming_avg
         self.__size = new_size
+        
+    def reset(self):
+        self.__avg = 0
+        self.__size = 0
