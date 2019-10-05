@@ -14,7 +14,8 @@ class TextDataset(Dataset):
                  text_column, 
                  label_column, 
                  label_mapping, 
-                 max_seq_len):
+                 max_seq_len, 
+                 tokenizer=None):
         self.df = df
         self.num_words = num_words
         self.text_column = text_column
@@ -23,8 +24,11 @@ class TextDataset(Dataset):
         self.max_seq_len = max_seq_len
         
         # fit tokenizer
-        self.tokenizer = keras.preprocessing.text.Tokenizer(num_words=self.num_words)
-        self.tokenizer.fit_on_texts(self.df[text_column])
+        if tokenizer is None:
+            self.tokenizer = keras.preprocessing.text.Tokenizer(num_words=self.num_words)
+            self.tokenizer.fit_on_texts(self.df[text_column])
+        else:
+            self.tokenizer = tokenizer
     
     def __len__(self):
         return len(self.df)
