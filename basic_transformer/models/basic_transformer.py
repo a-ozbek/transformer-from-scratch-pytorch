@@ -49,6 +49,8 @@ class BasicTransformer(nn.Module):
         y = torch.empty(batch_size, self.dim, timesteps)
         y = y.cuda()
         
+        self.weights_per_timestep = dict()
+        
         for i in range(timesteps):
             q_i = q[:, :, i]
             # get weights
@@ -58,6 +60,9 @@ class BasicTransformer(nn.Module):
             weights = weights / np.sqrt(self.dim)
             # softmax weights
             weights = torch.softmax(weights, dim=1)
+            
+            # log
+            self.weights_per_timestep[i] = weights.detach().cpu()
             
             y[:, :, i] = torch.sum(weights[:, np.newaxis, :] * v, dim=2)
             
