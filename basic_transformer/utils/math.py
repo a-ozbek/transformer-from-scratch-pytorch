@@ -30,3 +30,9 @@ class AvgContainer:
     def reset(self):
         self.__avg = 0
         self.__size = 0
+        
+        
+def normalize_axis_1(x):
+    x_normalized = x.T / x.sum(axis=1)
+    x_normalized = x_normalized.T
+    return x_normalized
